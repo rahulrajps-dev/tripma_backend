@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+@theme {
+  /* This maps your custom CSS variables so you can use them in Tailwind */
+  --color-brand: var(--accent);
+  --color-surface: var(--bg);
+  --color-text-main: var(--text);
+  --color-text-heading: var(--text-h);
+}
+
+:root {
+  --text: #6b6375;
+  --text-h: #6c066a;
+  --bg: #ffffff;
+  --border: #e5e4e7;
+  --accent: #4f46e5; /* Changed to Indigo for a travel feel */
+  
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #9ca3af;
+    --text-h: #f3f4f6;
+    --bg: #0f172a; /* Deep Slate Blue for Dark Mode */
+    --border: #1e293b;
+    --accent: #818cf8;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* REMOVED: #root fixed width and text-align: center. 
+   Tailwind will now handle the layout properly.
+*/
