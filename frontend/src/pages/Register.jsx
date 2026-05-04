@@ -13,7 +13,7 @@ const Register = () => {
 
   const [error, setError] = useState("");
 
-  // ✅ handleChange is back!
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
