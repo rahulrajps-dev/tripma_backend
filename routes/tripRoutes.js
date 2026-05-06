@@ -9,6 +9,8 @@ router.get("/trips", (req, res, next) => {
   next();
 }, getTrips);
 
+
+
 export default router;
 
 

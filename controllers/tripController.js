@@ -1,37 +1,65 @@
 // import Trip from "../models/Trip.js";
 import axios from "axios";
+import fs from "fs";
+import { getEmbedding } from "../utils/localEmbedding.js";
+import { getPlacesWithEmbeddings } from "../services/embeddingService.js";
+import { searchPlaces } from "../vector/search.js";
+
+const places = JSON.parse(fs.readFileSync("./places.json", "utf-8"));
+
+function cosineSimilarity(a, b) {
+  const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
+  const magA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+  const magB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+  return dot / (magA * magB);
+}
+
 export const getTrips = async (req, res) => {
   try {
-    const { budget,location,days } = req.query;
-    // let query = {};
+    const placesWithEmbeddings = getPlacesWithEmbeddings();
 
-    // if (budget) {
-    //   query.cost = { $lte: Number(budget) };
-    // }
+    console.log("TYPE:", typeof placesWithEmbeddings);
 
-    // const trips = await Trip.find(query);
-    // console.log("Query", query);
-    // console.log("ALL DATA:", trips);
-  
+    const { budget, location, days, interest } = req.query;
+    console.log("Interest in controller", interest);
 
-    //Creating place data to send as a prompt
-    // const placeData = trips.map((p) => {
-    //   return `Place:${p.name},Cost:${p.cost},location:${p.location}`;
-    // });
+    //query changing to vector
+    const queryText = `${location} ${budget} ${days}`;
 
-    //creating prompt
+    ///search from vectra
+
+    const relevantPlaces = await searchPlaces(
+      queryText,
+      location,
+      budget,
+      interest,
+    );
+
+    console.log("Relevant places", relevantPlaces.length);
+    console.log(
+      "Relevant places names",
+      relevantPlaces.map((p) => p.name),
+    );
+
+    //hard filter using interest and location
 
     const prompt = `
 you are a travel planner.
 User details are :
+-User wants:${interest}
 -Budget:INR${budget}
 -My Location:${location}
 -Number of days we have:${days}
 
+Available Places.
+${JSON.stringify(relevantPlaces)}
+
 Instructions:
--Choose the places i can go from my location which stays with in the budget give me muliple options if i have from ${location}
+-Pick only places that match what user wants.
+-Use only this available places
+-Ignore places that are loosely related (if user wants beach, don't include waterfalls or temples)
+-stays within budget
 -generate daywise itenary for each destination
--provide a cost breakdown for each destination
 
 Return ONLY raw JSON. No markdown. No code fences. No explanation:
 {
@@ -85,12 +113,11 @@ Return ONLY raw JSON. No markdown. No code fences. No explanation:
 }`;
 
     // console.log("placedata", placeData);
-    console.log("prompt", prompt);
 
     ///api call
 
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${process.env.API_KEY}`,
       {
         contents: [
           {
@@ -99,12 +126,18 @@ Return ONLY raw JSON. No markdown. No code fences. No explanation:
         ],
       },
     );
+
     const text = response.data.candidates[0].content.parts[0].text;
-    const cleanedData = text.replace(/```json|```/g,"").trim()
-    const aiPlan=JSON.parse(cleanedData)
-    console.log(aiPlan)
+    const cleanedData = text.replace(/```json|```/g, "").trim();
+    const aiPlan = JSON.parse(cleanedData);
+    console.log(aiPlan);
     res.status(200).json({ aiPlan });
   } catch (error) {
+    // console.log("❌ ERROR:", error.message);
+    // console.log("📍 WHERE:", error.stack?.split("\n")[1]);
+    // console.log("📟 STATUS:", error.response?.status);
+    // console.log("📋 REASON:", error.response?.data?.error?.message);
+    console.log("Error occured")
     res.status(500).json({ error: error.message });
   }
 };

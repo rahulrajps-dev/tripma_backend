@@ -4,11 +4,18 @@ import dotenv from "dotenv";
 import cors from "cors";
 import tripRoutes from "./routes/tripRoutes.js"
 import Trip from "./models/Trip.js";
-
 import authRoutes from "./routes/authRoutes.js"
+import { loadPlaceEmbeddings } from "./services/embeddingService.js";
+
+
 dotenv.config()
 
 const app=express();
+
+process.on('uncaughtException', (error) => {
+  console.log("❌ Uncaught:", error.message);
+  console.log("📍 Where:", error.stack?.split('\n')[1]);
+});
 
 app.use(cors());
 app.use(express.json());
@@ -19,6 +26,8 @@ app.use("/api/auth",authRoutes)
 app.get('/',(req,res)=>{
     res.send("Api is running");
 })
+
+await loadPlaceEmbeddings();
 
 mongoose.connect(process.env.MONGO_URI)
   .then(async() => {
