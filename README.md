@@ -229,7 +229,7 @@ RAG solves all these problems by first retrieving only the relevant places, then
 
 ## 👨‍💻 Author
 
-**Your Name Here**
+Rahulraj Ps
 - GitHub: [@Rahulraj Ps](https://github.com/rahulrajps-dev)
 - LinkedIn: https://www.linkedin.com/in/rahulrajps/
 
