@@ -10,16 +10,14 @@ const rows = xlsx.utils.sheet_to_json(sheet);
 console.log("rows length", rows.length);
 console.log("sample", rows[0]);
 
-const targetCities = [
+// const targetCities = [
 
-  "Munnar", "Varkala", "Alleppey", "Wayanad", 
-  "Kochi", "Kovalam", "Thrissur",
-
-  // Popular tourist destinations across India
-  "Goa",  "Mumbai", "Delhi",
-  "Agra", "Varanasi", "Bangalore", 
-  "Ooty", "Shimla", "Manali"
-];
+//   "Munnar", "Varkala", "Alleppey", "Wayanad", 
+//   "Kochi", "Kovalam", "Thrissur",
+//   "Goa",  "Mumbai", "Delhi",
+//   "Agra", "Varanasi", "Bangalore", 
+//   "Ooty", "Shimla", "Manali"
+// ];
 
 //to add desc
 
@@ -35,7 +33,7 @@ const guessType = (desc) => {
 
 //convert to our format
 
-const places = rows.filter(row=>targetCities.includes(row.City)).map((r) => ({
+const places = rows.map((r) => ({
   name: r.Place || " ",
   location: r.City || " ",
   type: guessType(r.Place_desc),

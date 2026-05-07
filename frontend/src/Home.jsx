@@ -5,6 +5,7 @@ import { BiSolidPlaneTakeOff } from "react-icons/bi";
 import { MdLocationOn } from "react-icons/md";
 import { BsCalendarWeek } from "react-icons/bs";
 import { IoSearchSharp } from "react-icons/io5";
+import { TbBulb } from "react-icons/tb";
 
 
 export default function Home() {
@@ -194,7 +195,7 @@ export default function Home() {
           </p>
 
           {/* ── SEARCH PILL ── */}
-          <div className="anim-fade-up-4 bg-white rounded-2xl flex items-center gap-2 p-3 pl-2 mx-auto shadow-2xl max-w-2xl w-full">
+          <div className="anim-fade-up-4 bg-white rounded-2xl flex items-center gap-2 p-3 pl-2 mx-auto shadow-2xl max-w-9xl w-full">
             {/* Budget */}
             <div className="flex flex-col px-4 flex-1 border-r border-slate-200">
               <div className="flex items-center gap-1 mb-0.5">
@@ -245,7 +246,7 @@ export default function Home() {
             {/* Interest */}
             <div className="flex flex-col px-4 flex-1">
               <div className="flex items-center gap-1 mb-0.5">
-                <BsCalendarWeek className="text-amber-400 text-sm" />
+                <TbBulb className="text-amber-400 text-sm" />
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                   Interest
                 </span>

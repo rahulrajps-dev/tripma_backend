@@ -8,39 +8,43 @@ dotenv.config();
 
 const places = JSON.parse(fs.readFileSync("./places.json", "utf-8"));
 
-// validate vector properly
 function validateVector(vec) {
   return (
     Array.isArray(vec) &&
-    vec.length > 0 &&
-    vec.every(v => typeof v === "number" && Number.isFinite(v))
+    vec.length === 384 &&
+    vec.every((v) => typeof v === "number" && Number.isFinite(v))
   );
 }
 
-async function seed() {
-  const index = new LocalIndex(
-    path.join(process.cwd(), "vector_store")
-  );
+// small delay to prevent memory crash
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-  // create index only if needed
+async function seed() {
+  const index = new LocalIndex(path.join(process.cwd(), "vector_store"));
+
   if (!(await index.isIndexCreated())) {
     await index.createIndex();
-    console.log("Index created");
+    console.log("✅ Index created");
   }
 
-  for (const place of places) {
-    // basic validation
+  let success = 0;
+  let skipped = 0;
+
+  for (let i = 0; i < places.length; i++) {
+    const place = places[i];
+
     if (!place?.name || !place?.location) {
-      console.log("Skipping invalid place:", place);
+      skipped++;
       continue;
     }
 
-    const text = `${place.name} ${place.cost} ${place.location}`;
+    const text = `${place.name} located in ${place.location} ${place.desc} This description is known for ${place.type || ""}`;
+
     const embedding = await getEmbedding(text);
 
-    // embedding validation
     if (!validateVector(embedding)) {
-      console.log("Bad embedding skipped:", place.name);
+      console.log("❌ Skipped:", place.name);
+      skipped++;
       continue;
     }
 
@@ -48,16 +52,23 @@ async function seed() {
       vector: embedding,
       metadata: {
         name: place.name,
-        cost: place.cost,
+        cost: place.cost || 0,
         location: place.location,
         type: place.type || "unknown",
       },
     });
 
-    console.log("Added:", place.name);
+    success++;
+
+    if (i % 100 === 0) {
+      console.log(`Progress: ${i}/${places.length}`); ///print progress in every 100 iterations
+    }
+    await delay(50); //delay
   }
 
-  console.log("All places added to vectra");
+  console.log("🎉 Done seeding");
+  console.log("✅ Success:", success);
+  console.log("❌ Skipped:", skipped);
 }
 
 seed();

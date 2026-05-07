@@ -5,26 +5,19 @@ import { getEmbedding } from "../utils/localEmbedding.js";
 import { getPlacesWithEmbeddings } from "../services/embeddingService.js";
 import { searchPlaces } from "../vector/search.js";
 
-const places = JSON.parse(fs.readFileSync("./places.json", "utf-8"));
-
-function cosineSimilarity(a, b) {
-  const dot = a.reduce((sum, val, i) => sum + val * b[i], 0);
-  const magA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
-  const magB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
-  return dot / (magA * magB);
-}
+// const places = JSON.parse(fs.readFileSync("./places.json", "utf-8"));
 
 export const getTrips = async (req, res) => {
   try {
-    const placesWithEmbeddings = getPlacesWithEmbeddings();
+    // const placesWithEmbeddings = getPlacesWithEmbeddings();
 
-    console.log("TYPE:", typeof placesWithEmbeddings);
+    // console.log("TYPE:", typeof placesWithEmbeddings);
 
     const { budget, location, days, interest } = req.query;
     console.log("Interest in controller", interest);
 
     //query changing to vector
-    const queryText = `${location} ${budget} ${days}`;
+    const queryText = `User from ${location}.Intrested in ${interest}.Trips for ${days}`;
 
     ///search from vectra
 
@@ -32,7 +25,7 @@ export const getTrips = async (req, res) => {
       queryText,
       location,
       budget,
-      interest,
+      interest, /// we are hard filtering with location and interest so we need them seperately
     );
 
     console.log("Relevant places", relevantPlaces.length);
@@ -130,7 +123,7 @@ Return ONLY raw JSON. No markdown. No code fences. No explanation:
     const text = response.data.candidates[0].content.parts[0].text;
     const cleanedData = text.replace(/```json|```/g, "").trim();
     const aiPlan = JSON.parse(cleanedData);
-    console.log(aiPlan);
+    console.log("Places:",aiPlan);
     res.status(200).json({ aiPlan });
   } catch (error) {
     // console.log("❌ ERROR:", error.message);

@@ -20,4 +20,7 @@ export const loadPlaceEmbeddings = async () => {
   );
 };
 
+//encapsulation loading once and using data in another function
+//getter
+
 export const getPlacesWithEmbeddings = () => embeddData;
