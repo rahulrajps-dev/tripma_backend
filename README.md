@@ -5,7 +5,7 @@ An intelligent trip planner powered by Google Gemini AI and RAG (Retrieval Augme
 ---
 
 ## 🚀 Live Demo
-> Coming soon
+tripma-backend-2u45-pmavffnx0-rahulrajps-devs-projects.vercel.app
 
 ---
 
