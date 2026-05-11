@@ -39,7 +39,7 @@ export default function Home() {
     setError(null);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/trip/trips?location=${fromLoc}&days=${numDays}&interest=${interest}`,
+        `https://tripma-backend.onrender.com/api/trip/trips?location=${fromLoc}&days=${numDays}&interest=${interest}`,
       );
       const data = await res.json();
 
