@@ -27,7 +27,6 @@ app.get('/',(req,res)=>{
     res.send("Api is running");
 })
 
-await loadPlaceEmbeddings();
 
 mongoose.connect(process.env.MONGO_URI)
   .then(async() => {
@@ -49,4 +48,9 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on ${PORT}`);
+
+  
+await loadPlaceEmbeddings();
+
+  console.log("Embeddings loaded");
 });
