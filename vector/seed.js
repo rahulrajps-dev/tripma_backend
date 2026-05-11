@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const places = JSON.parse(fs.readFileSync("./places.json", "utf-8"));
+const places = JSON.parse(fs.readFileSync("./places_enriched.json", "utf-8"));
 
 function validateVector(vec) {
   return (
@@ -55,6 +55,9 @@ async function seed() {
         cost: place.cost || 0,
         location: place.location,
         type: place.type || "unknown",
+        lat: place.lat,
+        lng: place.lng,
+        ratings:place.ratings
       },
     });
 

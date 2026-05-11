@@ -31,18 +31,20 @@ const guessType = (desc) => {
   return "general"
 };
 
+
 //convert to our format
 
 const places = rows.map((r) => ({
   name: r.Place || " ",
   location: r.City || " ",
   type: guessType(r.Place_desc),
-  cost: 0,
   time_required: r.Distance || " ",
   desc: r.Place_desc || " ",
-  ratings: Number(r.ratings) || 0,
+  ratings: Number(r.Ratings) || 0,
 }));
-//creating file in clean format
+
+
+// creating file in clean format
 fs.writeFileSync("./places.json", JSON.stringify(places, null, 2));
 
 console.log("File created", places.length, "Places created in JSON");

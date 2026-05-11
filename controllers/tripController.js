@@ -26,6 +26,7 @@ export const getTrips = async (req, res) => {
       location,
       budget,
       interest, /// we are hard filtering with location and interest so we need them seperately
+      days
     );
 
     console.log("Relevant places", relevantPlaces.length);
@@ -33,67 +34,64 @@ export const getTrips = async (req, res) => {
       "Relevant places names",
       relevantPlaces.map((p) => p.name),
     );
+    console.log("relevant place full",relevantPlaces)
 
     //hard filter using interest and location
 
-    const prompt = `
-you are a travel planner.
-User details are :
--User wants:${interest}
--Budget:INR${budget}
--My Location:${location}
--Number of days we have:${days}
+    const prompt = `You are a travel itinerary generator.
 
-Available Places.
+User details:
+- Interest: ${interest}
+- Starting Location: ${location}
+- Number of Days: ${days}
+
+The following places are ALREADY ranked based on:
+- semantic relevance
+- travel feasibility
+- distance
+- ratings
+
+Use the places exactly in the given order.
+Do NOT reorder, replace, or invent destinations.
+
+
+Available Ranked Places:
 ${JSON.stringify(relevantPlaces)}
 
 Instructions:
--Pick only places that match what user wants.
--Use only this available places
--Ignore places that are loosely related (if user wants beach, don't include waterfalls or temples)
--stays within budget
--generate daywise itenary for each destination
+- Generate travel recommendations only from the provided places.
+- Preserve the ranking order exactly as given.
+- Include the place rating in the response.
+- Create short and realistic descriptions.
+- Generate practical day-wise itineraries.
+- Keep plans aligned with the user's budget and trip duration.
+- Use attraction names from the provided data whenever possible.
+- Return up to 10 destinations if available.
+- Do not include unrelated place types.
+-Each destination is an ALTERNATIVE trip option.
+-Do NOT combine multiple destinations into one itinerary.
+-Generate a SEPARATE itinerary for each destination independently.
 
-Return ONLY raw JSON. No markdown. No code fences. No explanation:
+Return ONLY raw JSON.
+No markdown.
+No explanation.
+No code fences.
+
 {
   "places": [
     {
       "name": "",
+      "location": "",
+      "rating": 0,
       "description": "",
       "estimatedCost": 0,
       "searchQuery": "",
       "itinerary": [
-        { "day": 1, "place": "", "plan": "" }
-      ],
-      "cost": {
-        "travel": 0,
-        "stay": 0,
-        "food": 0,
-        "total": 0
-      }
-    },
-    {
-      "name": "",
-      "description": "",
-      "estimatedCost": 0,
-      "searchQuery": "",
-      "itinerary": [
-        { "day": 1, "place": "", "plan": "" }
-      ],
-      "cost": {
-        "travel": 0,
-        "stay": 0,
-        "food": 0,
-        "total": 0
-      }
-    },
-    {
-      "name": "",
-      "description": "",
-      "estimatedCost": 0,
-      "searchQuery": "",
-      "itinerary": [
-        { "day": 1, "place": "", "plan": "" }
+        {
+          "day": 1,
+          "place": "",
+          "plan": ""
+        }
       ],
       "cost": {
         "travel": 0,
@@ -103,7 +101,8 @@ Return ONLY raw JSON. No markdown. No code fences. No explanation:
       }
     }
   ]
-}`;
+}
+`;
 
     // console.log("placedata", placeData);
 
@@ -126,10 +125,7 @@ Return ONLY raw JSON. No markdown. No code fences. No explanation:
     console.log("Places:",aiPlan);
     res.status(200).json({ aiPlan });
   } catch (error) {
-    // console.log("❌ ERROR:", error.message);
-    // console.log("📍 WHERE:", error.stack?.split("\n")[1]);
-    // console.log("📟 STATUS:", error.response?.status);
-    // console.log("📋 REASON:", error.response?.data?.error?.message);
+    
     console.log("Error occured")
     res.status(500).json({ error: error.message });
   }

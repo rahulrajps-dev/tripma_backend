@@ -39,7 +39,7 @@ export default function Home() {
     setError(null);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/trip/trips?budget=${budget}&location=${fromLoc}&days=${numDays}&interest=${interest}`,
+        `http://localhost:5000/api/trip/trips?location=${fromLoc}&days=${numDays}&interest=${interest}`,
       );
       const data = await res.json();
 
@@ -190,13 +190,12 @@ export default function Home() {
 
           {/* Subtitle */}
           <p className="anim-fade-up-3 text-white/80 text-base font-medium mb-9">
-            Enter your budget and let our AI plan the perfect trip — flights,
-            stays, food & more.
+            Explore destinations, discover stays, and generate intelligent travel plans with AI.
           </p>
 
           {/* ── SEARCH PILL ── */}
           <div className="anim-fade-up-4 bg-white rounded-2xl flex items-center gap-2 p-3 pl-2 mx-auto shadow-2xl max-w-9xl w-full">
-            {/* Budget */}
+            {/* Budget
             <div className="flex flex-col px-4 flex-1 border-r border-slate-200">
               <div className="flex items-center gap-1 mb-0.5">
                 <BiSolidPlaneTakeOff className="text-sky-500 text-sm" />
@@ -210,7 +209,7 @@ export default function Home() {
                 onChange={(e) => setBudget(e.target.value)}
                 className="text-sm font-bold text-slate-900 bg-transparent border-none outline-none placeholder:text-slate-300 placeholder:font-normal w-full"
               />
-            </div>
+            </div> */}
 
             {/* From */}
             <div className="flex flex-col px-4 flex-1 border-r border-slate-200">
@@ -253,7 +252,7 @@ export default function Home() {
               </div>
               <input
                 type="text"
-                placeholder="e.g. Beach"
+                placeholder="Describe your dream trip..."
                 onChange={(e) => setInterest(e.target.value)}
                 className="text-sm font-bold text-slate-900 bg-transparent border-none outline-none placeholder:text-slate-300 placeholder:font-normal w-full"
               />
@@ -362,7 +361,7 @@ export default function Home() {
                       className="card-img-zoom w-full h-full object-cover block"
                       src={
                         place.imageUrl ||
-                        `https://picsum.photos/seed/${encodeURIComponent(place.name)}/600/400`
+                        `https://source.unsplash.com/600x400/?${place.type},travel`
                       }
                       alt={place.name}
                     />
@@ -372,7 +371,7 @@ export default function Home() {
                     </div>
                     {/* Rating badge */}
                     <div className="absolute bottom-3 left-3 bg-black/55 backdrop-blur text-white text-xs font-bold px-2.5 py-1 rounded-full">
-                      ⭐ 4.8
+                      {place.ratings}
                     </div>
                   </div>
 
@@ -385,7 +384,7 @@ export default function Home() {
                     {/* Tags */}
                     <div className="flex gap-1.5 flex-wrap mb-3">
                       {(place.tags || [place.name])
-                        .slice(0, 3)
+                        .slice(0, 6)
                         .map((tag, ti) => (
                           <span
                             key={ti}
